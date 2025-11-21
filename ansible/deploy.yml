@@ -1,0 +1,15 @@
+---
+- name: Deploy Mini Shop API to k3s
+  hosts: mini_shop
+  connection: local
+  gather_facts: yes
+  become: false
+
+  vars:
+    kubeconfig_path: /etc/rancher/k3s/k3s.yaml
+
+  tasks:
+    - name: Apply Kubernetes manifests
+      environment:
+        KUBECONFIG: "{{ kubeconfig_path }}"
+      command: kubectl apply -f ../k8s/
