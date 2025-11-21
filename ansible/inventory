@@ -1,0 +1,2 @@
+[mini_shop]
+localhost ansible_connection=local

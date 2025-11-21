@@ -1,0 +1,46 @@
+---
+- name: Prepare server for Mini Shop API
+  hosts: mini_shop
+  become: true
+
+  vars:
+    k3s_install_url: https://get.k3s.io
+
+  tasks:
+    - name: Ensure apt cache is up to date
+      apt:
+        update_cache: yes
+
+    - name: Install required packages (docker, curl)
+      apt:
+        name:
+          - docker.io
+          - curl
+        state: present
+
+    - name: Enable and start Docker
+      systemd:
+        name: docker
+        enabled: true
+        state: started
+
+    - name: Install k3s if not installed
+      shell: |
+        curl -sfL {{ k3s_install_url }} | sh -
+      args:
+        creates: /usr/local/bin/k3s
+
+    - name: Ensure kubeconfig directory exists
+      become_user: "{{ ansible_user_id }}"
+      file:
+        path: "{{ ansible_env.HOME }}/.kube"
+        state: directory
+        mode: "0700"
+
+    - name: Copy k3s kubeconfig to user home
+      copy:
+        src: /etc/rancher/k3s/k3s.yaml
+        dest: "{{ ansible_env.HOME }}/.kube/config"
+        mode: "0600"
+        remote_src: true
+      become_user: root
