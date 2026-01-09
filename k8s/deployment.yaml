@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: mini-shop
-        image: ghcr.io/YOUR_GITHUB_USERNAME/mini-shop-api:latest
+        image: ghcr.io/stevver/mini-shop-api:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 5000
